@@ -1,0 +1,21 @@
+
+BROKER:
+  host: 'localhost:5671'
+  cert_db: '/home/alex/certs/ca_certificate.pem'
+  cert_file: '/home/alex/certs/client_certificate.pem'
+  cert_key: '/home/alex/certs/client_key.pem'
+  cert_password: 'swim-ti'
+
+SUBSCRIPTION-MANAGER:
+  host: 'localhost:8080'
+  https: false
+  username: 'test'
+  password: 'test'
+
+ADSB:
+  CITIES:
+    Brussels: 'EBBR'
+    Amsterdam: 'EHAM'
+    Paris: 'LFPG'
+    Berlin: 'EDDB'
+    Athens: 'LGAV'

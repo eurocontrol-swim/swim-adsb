@@ -11,13 +11,14 @@ dependencies:
   - libstdcxx-ng=8.2.0=hdf63c60_1
   - more-itertools=7.0.0=py37_0
   - ncurses=6.1=he6710b0_1
-  - openssl=1.1.1b=h7b6447c_1
+  - openssl=1.1.1c=h7b6447c_1
   - pip=19.1.1=py37_0
   - pluggy=0.11.0=py_0
   - py=1.8.0=py37_0
   - pytest=4.5.0=py37_0
   - pytest-cov=2.6.1=py37_0
   - python=3.7.3=h0371630_0
+  - pyyaml=5.1=py37h7b6447c_0
   - readline=7.0=h7b6447c_5
   - setuptools=41.0.1=py37_0
   - six=1.12.0=py37_0
@@ -26,12 +27,16 @@ dependencies:
   - wcwidth=0.1.7=py37_0
   - wheel=0.33.4=py37_0
   - xz=5.2.4=h14c3975_4
+  - yaml=0.1.7=had09818_2
   - zlib=1.2.11=h7b6447c_3
   - pip:
+    - cachetools==3.1.1
     - chardet==3.0.4
     - idna==2.8
-    - opensky-network-client==0.0.2
+    - opensky-network-client==0.0.4
+    - python-qpid-proton==0.28.0
     - requests==2.22.0
     - rest-client==0.0.5
-    - swim-pubsub==0.0.1
-    - urllib3==1.25.2
+    - subscription-manager-client==0.0.7
+    - swim-pubsub==0.0.6
+    - urllib3==1.25.3
