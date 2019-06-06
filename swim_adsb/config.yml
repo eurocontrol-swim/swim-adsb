@@ -9,6 +9,7 @@ BROKER:
 SUBSCRIPTION-MANAGER:
   host: 'localhost:8080'
   https: false
+  timeout: 30
   username: 'test'
   password: 'test'
 

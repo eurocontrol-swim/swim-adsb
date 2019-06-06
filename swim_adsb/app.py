@@ -29,8 +29,8 @@ Details on EUROCONTROL: http://www.eurocontrol.int
 """
 from functools import partial
 
-from swim_pubsub.publisher.handler import Topic
-from swim_pubsub.publisher.publisher import PublisherApp
+from swim_pubsub.core.factory import AppFactory
+from swim_pubsub.core.handlers import Topic
 
 from swim_adsb.adsb.traffic import OpenSkyNetworkDataHandler
 
@@ -38,8 +38,16 @@ __author__ = "EUROCONTROL (SWIM)"
 
 
 if __name__ == '__main__':
-    app = PublisherApp('config.yml')
-    cities = app.config['ADSB']['CITIES']
+    app = AppFactory.create_publisher_app_from_config('config.yml')
+    # cities = app.config['ADSB']['CITIES']
+
+    cities = {
+        'Brussels': 'EBBR',
+        'Amsterdam': 'EHAM',
+        'Paris': 'LFPG',
+        'Berlin': 'EDDB',
+        'Athens': 'LGAV'
+    }
 
     opensky = OpenSkyNetworkDataHandler()
 
@@ -52,6 +60,7 @@ if __name__ == '__main__':
         flights.add_route(key=f"arrivals.{city.lower()}", handler=arrivals_handler)
         flights.add_route(key=f"departures.{city.lower()}", handler=departures_handler)
 
-    app.register_topic(flights)
+    publisher = app.create_publisher('test', 'test')
+    publisher.register_topic(flights)
 
     app.run()
