@@ -60,7 +60,7 @@ if __name__ == '__main__':
         flights.add_route(key=f"arrivals.{city.lower()}", handler=arrivals_handler)
         flights.add_route(key=f"departures.{city.lower()}", handler=departures_handler)
 
-    publisher = app.create_publisher('test', 'test')
+    publisher = app.register_publisher('test', 'test')
     publisher.register_topic(flights)
 
     app.run()
