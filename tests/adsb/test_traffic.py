@@ -27,7 +27,7 @@ http://opensource.org/licenses/BSD-3-Clause
 
 Details on EUROCONTROL: http://www.eurocontrol.int
 """
-from swim_adsb.adsb.traffic import OpenSkyNetworkDataHandler
+from swim_adsb.adsb.air_traffic import AirTraffic
 
 __author__ = "EUROCONTROL (SWIM)"
 
@@ -40,7 +40,7 @@ airports = {
 }
 
 
-opensky = OpenSkyNetworkDataHandler()
+opensky = AirTraffic()
 
 
 def test_traffic():

@@ -8,8 +8,8 @@ dependencies:
   - importlib_metadata=0.17=py37_1
   - libedit=3.1.20181209=hc058e9b_0
   - libffi=3.2.1=hd88cf55_4
-  - libgcc-ng=8.2.0=hdf63c60_1
-  - libstdcxx-ng=8.2.0=hdf63c60_1
+  - libgcc-ng=9.1.0=hdf63c60_0
+  - libstdcxx-ng=9.1.0=hdf63c60_0
   - more-itertools=7.0.0=py37_0
   - ncurses=6.1=he6710b0_1
   - openssl=1.1.1c=h7b6447c_1
@@ -19,7 +19,7 @@ dependencies:
   - py=1.8.0=py37_0
   - pyparsing=2.4.0=py_0
   - pytest=4.6.2=py37_0
-  - pytest-cov=2.6.1=py37_0
+  - pytest-cov=2.7.1=py_0
   - python=3.7.3=h0371630_0
   - pyyaml=5.1=py37h7b6447c_0
   - readline=7.0=h7b6447c_5
@@ -37,10 +37,10 @@ dependencies:
     - cachetools==3.1.1
     - chardet==3.0.4
     - idna==2.8
-    - opensky-network-client==0.0.4
+    - opensky-network-client==0.0.5
     - python-qpid-proton==0.28.0
     - requests==2.22.0
     - rest-client==0.0.5
     - subscription-manager-client==0.0.8
-    - swim-pubsub==1.0.1
+    - swim-pubsub==1.2.0
     - urllib3==1.25.3

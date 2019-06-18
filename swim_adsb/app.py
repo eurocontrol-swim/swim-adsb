@@ -29,38 +29,37 @@ Details on EUROCONTROL: http://www.eurocontrol.int
 """
 from functools import partial
 
-from swim_pubsub.core.factory import AppFactory
-from swim_pubsub.core.handlers import Topic
+from swim_pubsub.core.topics import TopicGroup
+from swim_pubsub.publisher import PubApp
 
-from swim_adsb.adsb.traffic import OpenSkyNetworkDataHandler
+from swim_adsb.adsb.air_traffic import AirTraffic
 
 __author__ = "EUROCONTROL (SWIM)"
 
 
-if __name__ == '__main__':
-    app = AppFactory.create_publisher_app_from_config('config.yml')
-    # cities = app.config['ADSB']['CITIES']
+def create_app():
+    # instantiate app
+    app = PubApp.create_from_config('config.yml')
+    config = app.config['ADSB']
 
-    cities = {
-        'Brussels': 'EBBR',
-        'Amsterdam': 'EHAM',
-        'Paris': 'LFPG',
-        'Berlin': 'EDDB',
-        'Athens': 'LGAV'
-    }
+    # configure topics
+    air_traffic = AirTraffic()
 
-    opensky = OpenSkyNetworkDataHandler()
+    flights = TopicGroup(name='flights', interval_in_sec=config['INTERVAL_IN_SEC'], callback=air_traffic.get_states_dict)
 
-    flights = Topic(name='flights', interval=5, handler=opensky.get_states_dict)
+    for city, code in config['CITIES'].items():
+        arrivals_handler = partial(air_traffic.arrivals_handler, code)
+        departures_handler = partial(air_traffic.departures_handler, code)
 
-    for city, code in cities.items():
-        arrivals_handler = partial(opensky.arrivals_handler, code)
-        departures_handler = partial(opensky.departures_handler, code)
+        flights.create_topic(id=f"arrivals.{city.lower()}", callback=arrivals_handler)
+        flights.create_topic(id=f"departures.{city.lower()}", callback=departures_handler)
 
-        flights.add_route(key=f"arrivals.{city.lower()}", handler=arrivals_handler)
-        flights.add_route(key=f"departures.{city.lower()}", handler=departures_handler)
-
+    # create publisher based on a real user of Subscription Manager and assign the topic group on them
     publisher = app.register_publisher('test', 'test')
-    publisher.register_topic(flights)
+    publisher.register_topic_group(flights)
 
+    return app
+
+if __name__ == '__main__':
+    app = create_app()
     app.run()
