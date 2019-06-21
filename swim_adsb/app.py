@@ -27,6 +27,7 @@ http://opensource.org/licenses/BSD-3-Clause
 
 Details on EUROCONTROL: http://www.eurocontrol.int
 """
+import os
 from functools import partial
 
 from swim_pubsub.core.topics import TopicGroup
@@ -36,30 +37,41 @@ from swim_adsb.adsb.air_traffic import AirTraffic
 
 __author__ = "EUROCONTROL (SWIM)"
 
+def _get_config_path():
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    return os.path.join(current_dir, 'config.yml')
 
 def create_app():
     # instantiate app
-    app = PubApp.create_from_config('config.yml')
-    config = app.config['ADSB']
-
-    # configure topics
-    air_traffic = AirTraffic()
-
-    flights = TopicGroup(name='flights', interval_in_sec=config['INTERVAL_IN_SEC'], callback=air_traffic.get_states_dict)
-
-    for city, code in config['CITIES'].items():
-        arrivals_handler = partial(air_traffic.arrivals_handler, code)
-        departures_handler = partial(air_traffic.departures_handler, code)
-
-        flights.create_topic(id=f"arrivals.{city.lower()}", callback=arrivals_handler)
-        flights.create_topic(id=f"departures.{city.lower()}", callback=departures_handler)
-
-    # create publisher based on a real user of Subscription Manager and assign the topic group on them
-    publisher = app.register_publisher('test', 'test')
-    publisher.register_topic_group(flights)
+    app = PubApp.create_from_config(_get_config_path())
 
     return app
 
+app = create_app()
+
+config = app.config['ADSB']
+
+# configure topics
+air_traffic = AirTraffic()
+
+flights = TopicGroup(name='flights', interval_in_sec=config['INTERVAL_IN_SEC'], callback=air_traffic.get_states_dict)
+
+for city, code in config['CITIES'].items():
+    arrivals_handler = partial(air_traffic.arrivals_handler, code)
+    departures_handler = partial(air_traffic.departures_handler, code)
+
+    flights.create_topic(id=f"arrivals.{city.lower()}", callback=arrivals_handler)
+    flights.create_topic(id=f"departures.{city.lower()}", callback=departures_handler)
+
+# create publisher based on a real user of Subscription Manager and assign the topic group on them
+publisher = app.register_publisher(username=os.environ['SWIM_ADSB_USERNAME'],
+                                   password=os.environ['SWIM_ADSB_PASSWORD'])
+publisher.register_topic_group(flights)
+
+
+@app.before_run
+def populate_publisher_topics():
+    publisher.populate_topics()
+
 if __name__ == '__main__':
-    app = create_app()
     app.run()
