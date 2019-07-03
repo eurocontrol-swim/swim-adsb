@@ -37,15 +37,18 @@ from swim_adsb.adsb.air_traffic import AirTraffic
 
 __author__ = "EUROCONTROL (SWIM)"
 
+
 def _get_config_path():
     current_dir = os.path.dirname(os.path.realpath(__file__))
     return os.path.join(current_dir, 'config.yml')
+
 
 def create_app():
     # instantiate app
     app = PubApp.create_from_config(_get_config_path())
 
     return app
+
 
 app = create_app()
 
@@ -72,6 +75,7 @@ publisher.register_topic_group(flights)
 @app.before_run
 def populate_publisher_topics():
     publisher.populate_topics()
+
 
 if __name__ == '__main__':
     app.run()
