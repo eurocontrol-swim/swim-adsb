@@ -27,6 +27,7 @@ http://opensource.org/licenses/BSD-3-Clause
 
 Details on EUROCONTROL: http://www.eurocontrol.int
 """
+import json
 import logging
 from datetime import datetime, timedelta
 from typing import Tuple, List, Callable, Dict, Optional, Union
@@ -34,6 +35,7 @@ from typing import Tuple, List, Callable, Dict, Optional, Union
 from cachetools import cached, TTLCache
 from opensky_network_client.models import FlightConnection, StateVector
 from opensky_network_client.opensky_network import OpenskyNetworkClient
+from proton import Message
 
 __author__ = "EUROCONTROL (SWIM)"
 
@@ -107,24 +109,25 @@ class AirTraffic:
 
         return {state.icao24: state for state in states}
 
-    def arrivals_handler(self, airport: str, topic_group_data: Optional[Dict[str, StateVector]] = None) \
-            -> List[AirTrafficDataType]:
+    def arrivals_handler(self, airport: str, topic_group_data: Optional[Dict[str, StateVector]] = None) -> Message:
         """
         Is the callback that will be used to the arrival related topics
         """
-        return self._flight_connection_handler(airport,
+        data = self._flight_connection_handler(airport,
                                                states_dict=topic_group_data,
                                                get_flight_connections_handler=self._arrivals_today_handler)
 
+        return Message(body=json.dumps(data), content_type='application/json')
 
-    def departures_handler(self, airport: str, topic_group_data: Optional[Dict[str, StateVector]] = None) \
-            -> List[AirTrafficDataType]:
+    def departures_handler(self, airport: str, topic_group_data: Optional[Dict[str, StateVector]] = None) -> Message:
         """
         Is the callback that will be used to the departure related topics
         """
-        return self._flight_connection_handler(airport,
+        data = self._flight_connection_handler(airport,
                                                states_dict=topic_group_data,
                                                get_flight_connections_handler=self._departures_today_handler)
+
+        return Message(body=json.dumps(data), content_type='application/json')
 
     def _flight_connection_handler(self,
                                    airport: str,
@@ -150,15 +153,14 @@ class AirTraffic:
 
         return data
 
-    def _get_flight_data(self, state: StateVector, flight_connection: FlightConnection) -> AirTrafficDataType:
+    @staticmethod
+    def _get_flight_data(state: StateVector, flight_connection: FlightConnection) -> AirTrafficDataType:
         """
         Combines data of an ongoing flight and an arrival or departure and returns a subset of it.
         :param state:
         :param flight_connection:
         :return:
         """
-        # from_airport = self._get_airport_name(icao=flight_connection.est_departure_airport)
-        # to_airport = self._get_airport_name(icao=flight_connection.est_arrival_airport)
         from_airport = flight_connection.est_departure_airport or "Unknown airport"
         to_airport = flight_connection.est_arrival_airport or "Unknown airport"
 
@@ -171,7 +173,6 @@ class AirTraffic:
             'last_contact': state.last_contact_in_sec
         }
 
-
     @staticmethod
     def _today() -> Tuple[int, int]:
         """
@@ -183,13 +184,3 @@ class AirTraffic:
         end = datetime(today.year, today.month, today.day, 23, 59, 59)
 
         return int(begin.timestamp()), int(end.timestamp())
-
-    # @lru_cache(maxsize=None)
-    # def _get_airport_name(self, icao):
-    #     try:
-    #         airport = self.client.get_airport(icao=icao)
-    #     except Exception as e:
-    #         _logger.error(f"Couldn't find airport {icao}: {str(e)}")
-    #         return "Unknown airport"
-    #
-    #     return f"{airport.name}, {airport.municipality}"

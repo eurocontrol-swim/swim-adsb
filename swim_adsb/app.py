@@ -63,8 +63,8 @@ for city, code in config['CITIES'].items():
     arrivals_handler = partial(air_traffic.arrivals_handler, code)
     departures_handler = partial(air_traffic.departures_handler, code)
 
-    flights.create_topic(id=f"arrivals.{city.lower()}", callback=arrivals_handler)
-    flights.create_topic(id=f"departures.{city.lower()}", callback=departures_handler)
+    flights.create_topic(topic_id=f"arrivals.{city.lower()}", callback=arrivals_handler)
+    flights.create_topic(topic_id=f"departures.{city.lower()}", callback=departures_handler)
 
 # create publisher based on a real user of Subscription Manager and assign the topic group on them
 publisher = app.register_publisher(username=app.config['SWIM_ADSB_USERNAME'],

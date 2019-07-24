@@ -5,6 +5,7 @@ build/
 log/
 *.egg-info/
 .idea/workspace.xml
+.idea/codeStyles/Project.xml
 .cache/
 __pycache__/
 .coverage
