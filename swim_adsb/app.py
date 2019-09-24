@@ -55,7 +55,7 @@ app = create_app()
 config = app.config['ADSB']
 
 # configure topics
-air_traffic = AirTraffic()
+air_traffic = AirTraffic(traffic_timespan_in_days=config['TRAFFIC_TIMESPAN_IN_DAYS'])
 
 flights = TopicGroup(name='flights', interval_in_sec=config['INTERVAL_IN_SEC'], callback=air_traffic.get_states_dict)
 

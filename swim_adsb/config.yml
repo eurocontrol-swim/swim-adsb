@@ -49,6 +49,7 @@ ADSB:
     Berlin: 'EDDB'
     Athens: 'LGAV'
   INTERVAL_IN_SEC: 5
+  TRAFFIC_TIMESPAN_IN_DAYS: 3
 
 SWIM_ADSB_USERNAME: 'swim-adsb'
 SWIM_ADSB_PASSWORD: 'swim-adsb'

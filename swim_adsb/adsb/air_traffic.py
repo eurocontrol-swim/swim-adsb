@@ -45,10 +45,11 @@ AirTrafficDataType = Dict[str, Union[str, float, int]]
 
 
 class AirTraffic:
-    def __init__(self):
+    def __init__(self, traffic_timespan_in_days):
         """
         Using the OpenSky Network API it tracks the flights from and to specific airports.
         """
+        self.traffic_timespan_in_days = traffic_timespan_in_days
         self.client: OpenskyNetworkClient = OpenskyNetworkClient.create('opensky-network.org', timeout=30)
 
     def _flight_connections_today(self, icao: str, callback: Callable) -> List[FlightConnection]:
@@ -57,7 +58,7 @@ class AirTraffic:
 
         :param icao: airport identifier
         """
-        begin, end = self._today()
+        begin, end = self._days_span(self.traffic_timespan_in_days)
 
         try:
             result = callback(icao, begin, end)
@@ -174,13 +175,15 @@ class AirTraffic:
         }
 
     @staticmethod
-    def _today() -> Tuple[int, int]:
+    def _days_span(days: int) -> Tuple[int, int]:
         """
         Returns the timestamps of the start (00:00:00 AM) and the end (23:59:59 PM) of the current day in seconds since
         UNIX epoch.
+        :param days: indicates how many days in the past from today the span will be calculated
+        :return:
         """
         today = datetime.today()
-        begin = datetime(today.year, today.month, today.day, 0, 0) - timedelta(days=1)
+        begin = datetime(today.year, today.month, today.day, 0, 0) - timedelta(days=days)
         end = datetime(today.year, today.month, today.day, 23, 59, 59)
 
         return int(begin.timestamp()), int(end.timestamp())
