@@ -182,8 +182,7 @@ class AirTraffic:
         :param days: indicates how many days in the past from today the span will be calculated
         :return:
         """
-        today = datetime.today()
-        begin = datetime(today.year, today.month, today.day, 0, 0) - timedelta(days=days)
-        end = datetime(today.year, today.month, today.day, 23, 59, 59)
+        end = datetime.today()
+        begin = end - timedelta(days=days)
 
         return int(begin.timestamp()), int(end.timestamp())
