@@ -3,7 +3,6 @@ FROM swim-base
 LABEL maintainer="SWIM EUROCONTROL <http://www.eurocontrol.int>"
 
 ENV PATH="/opt/conda/bin:$PATH"
-ENV BROKER_CERT_PASS='swim-ti'
 
 RUN mkdir -p /app
 WORKDIR /app

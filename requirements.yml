@@ -5,9 +5,9 @@ dependencies:
   - pytest-cov
   - pyyaml
   - pip:
-      - git+https://git@bitbucket.org/antavelos-eurocontrol/rest-client.git
-      - git+https://git@bitbucket.org/antavelos-eurocontrol/opensky-network-client.git
-      - git+https://git@bitbucket.org/antavelos-eurocontrol/subscription-manager-client.git
-      - git+https://git@bitbucket.org/antavelos-eurocontrol/swim-pubsub.git
+      - git+https://git@github.com/eurocontrol-swim/rest-client.git
+      - git+https://git@github.com/eurocontrol-swim/opensky-network-client.git
+      - git+https://git@github.com/eurocontrol-swim/subscription-manager-client.git
+      - git+https://git@github.com/eurocontrol-swim/swim-pubsub.git
       - python-qpid_proton
       - cachetools
