@@ -52,4 +52,4 @@ ADSB:
   TRAFFIC_TIMESPAN_IN_DAYS: 3
 
 SWIM_ADSB_SM_USER: 'swim-adsb'
-SWIM_ADSB_PASS: 'swim-adsb'
+SWIM_ADSB_SM_PASS: 'swim-adsb'

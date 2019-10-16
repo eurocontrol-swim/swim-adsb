@@ -68,7 +68,7 @@ for city, code in config['CITIES'].items():
 
 # create publisher based on a real user of Subscription Manager and assign the topic group on them
 publisher = app.register_publisher(username=app.config['SWIM_ADSB_SM_USER'],
-                                   password=app.config['SWIM_ADSB_PASS'])
+                                   password=app.config['SWIM_ADSB_SM_PASS'])
 publisher.register_topic_group(flights)
 
 
