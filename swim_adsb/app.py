@@ -27,15 +27,18 @@ http://opensource.org/licenses/BSD-3-Clause
 
 Details on EUROCONTROL: http://www.eurocontrol.int
 """
+import logging
 import os
 from functools import partial
 
-from swim_pubsub.core.topics import TopicGroup
+from swim_pubsub.core.topics.topics import ScheduledTopic, Pipeline
 from swim_pubsub.publisher import PubApp
 
 from swim_adsb.adsb.air_traffic import AirTraffic
 
 __author__ = "EUROCONTROL (SWIM)"
+
+_logger = logging.getLogger(__name__)
 
 
 def _get_config_path():
@@ -45,37 +48,35 @@ def _get_config_path():
 
 def create_app():
     # instantiate app
-    app = PubApp.create_from_config(_get_config_path())
-
-    return app
+    return PubApp.create_from_config(_get_config_path())
 
 
 app = create_app()
+
+publisher = app.register_publisher(username=app.config['SWIM_ADSB_SM_USER'],
+                                   password=app.config['SWIM_ADSB_SM_PASS'])
 
 config = app.config['ADSB']
 
 # configure topics
 air_traffic = AirTraffic(traffic_timespan_in_days=config['TRAFFIC_TIMESPAN_IN_DAYS'])
 
-flights = TopicGroup(name='flights', interval_in_sec=config['INTERVAL_IN_SEC'], callback=air_traffic.get_states_dict)
-
 for city, code in config['CITIES'].items():
-    arrivals_handler = partial(air_traffic.arrivals_handler, code)
-    departures_handler = partial(air_traffic.departures_handler, code)
+    arrivals_pipeline = Pipeline([air_traffic.get_states_dict,
+                                  partial(air_traffic.arrivals_handler, code)])
 
-    flights.create_topic(topic_id=f"arrivals.{city.lower()}", callback=arrivals_handler)
-    flights.create_topic(topic_id=f"departures.{city.lower()}", callback=departures_handler)
+    departures_pipeline = Pipeline([air_traffic.get_states_dict,
+                                    partial(air_traffic.departures_handler, code)])
 
-# create publisher based on a real user of Subscription Manager and assign the topic group on them
-publisher = app.register_publisher(username=app.config['SWIM_ADSB_SM_USER'],
-                                   password=app.config['SWIM_ADSB_SM_PASS'])
-publisher.register_topic_group(flights)
+    arrivals_topic = ScheduledTopic(topic_id=f"arrivals.{city.lower()}",
+                                    pipeline=arrivals_pipeline,
+                                    interval_in_sec=config['INTERVAL_IN_SEC'])
+    departures_topic = ScheduledTopic(topic_id=f"departures.{city.lower()}",
+                                      pipeline=departures_pipeline,
+                                      interval_in_sec=config['INTERVAL_IN_SEC'])
 
-
-@app.before_run
-def populate_publisher_topics():
-    publisher.populate_topics()
-
+    publisher.register_topic(arrivals_topic)
+    publisher.register_topic(departures_topic)
 
 if __name__ == '__main__':
     app.run()

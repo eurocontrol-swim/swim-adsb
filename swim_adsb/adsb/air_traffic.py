@@ -30,7 +30,7 @@ Details on EUROCONTROL: http://www.eurocontrol.int
 import json
 import logging
 from datetime import datetime, timedelta
-from typing import Tuple, List, Callable, Dict, Optional, Union
+from typing import Tuple, List, Callable, Dict, Optional, Union, Any
 
 from cachetools import cached, TTLCache
 from opensky_network_client.models import FlightConnection, StateVector
@@ -103,29 +103,30 @@ class AirTraffic:
 
         return result
 
-    def get_states_dict(self) -> Dict[str, StateVector]:
+    @cached(cache=TTLCache(maxsize=1024, ttl=30))
+    def get_states_dict(self, context: Optional[Any] = None) -> Dict[str, StateVector]:
         """
         """
         states = self._get_states()
 
         return {state.icao24: state for state in states}
 
-    def arrivals_handler(self, airport: str, topic_group_data: Optional[Dict[str, StateVector]] = None) -> Message:
+    def arrivals_handler(self, airport: str, context: Optional[Dict[str, StateVector]] = None) -> Message:
         """
         Is the callback that will be used to the arrival related topics
         """
         data = self._flight_connection_handler(airport,
-                                               states_dict=topic_group_data,
+                                               states_dict=context,
                                                get_flight_connections_handler=self._arrivals_today_handler)
 
         return Message(body=json.dumps(data), content_type='application/json')
 
-    def departures_handler(self, airport: str, topic_group_data: Optional[Dict[str, StateVector]] = None) -> Message:
+    def departures_handler(self, airport: str, context: Optional[Dict[str, StateVector]] = None) -> Message:
         """
         Is the callback that will be used to the departure related topics
         """
         data = self._flight_connection_handler(airport,
-                                               states_dict=topic_group_data,
+                                               states_dict=context,
                                                get_flight_connections_handler=self._departures_today_handler)
 
         return Message(body=json.dumps(data), content_type='application/json')
