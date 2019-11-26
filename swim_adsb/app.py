@@ -68,10 +68,10 @@ for city, code in config['CITIES'].items():
     departures_pipeline = Pipeline([air_traffic.get_states_dict,
                                     partial(air_traffic.departures_handler, code)])
 
-    arrivals_topic = ScheduledTopic(topic_id=f"arrivals.{city.lower()}",
+    arrivals_topic = ScheduledTopic(topic_name=f"arrivals.{city.lower()}",
                                     pipeline=arrivals_pipeline,
                                     interval_in_sec=config['INTERVAL_IN_SEC'])
-    departures_topic = ScheduledTopic(topic_id=f"departures.{city.lower()}",
+    departures_topic = ScheduledTopic(topic_name=f"departures.{city.lower()}",
                                       pipeline=departures_pipeline,
                                       interval_in_sec=config['INTERVAL_IN_SEC'])
 
