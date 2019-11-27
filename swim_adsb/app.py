@@ -31,7 +31,7 @@ import logging
 import os
 from functools import partial
 
-from swim_pubsub.core.topics.topics import ScheduledTopic, Pipeline
+from swim_pubsub.core.topics.topics import ScheduledTopic
 from swim_pubsub.publisher import PubApp
 
 from swim_adsb.adsb.air_traffic import AirTraffic
@@ -62,17 +62,11 @@ config = app.config['ADSB']
 air_traffic = AirTraffic(traffic_timespan_in_days=config['TRAFFIC_TIMESPAN_IN_DAYS'])
 
 for city, code in config['CITIES'].items():
-    arrivals_pipeline = Pipeline([air_traffic.get_states_dict,
-                                  partial(air_traffic.arrivals_handler, code)])
-
-    departures_pipeline = Pipeline([air_traffic.get_states_dict,
-                                    partial(air_traffic.departures_handler, code)])
-
     arrivals_topic = ScheduledTopic(topic_name=f"arrivals.{city.lower()}",
-                                    pipeline=arrivals_pipeline,
+                                    data_handler=partial(air_traffic.arrivals_handler, code),
                                     interval_in_sec=config['INTERVAL_IN_SEC'])
     departures_topic = ScheduledTopic(topic_name=f"departures.{city.lower()}",
-                                      pipeline=departures_pipeline,
+                                      data_handler=partial(air_traffic.departures_handler, code),
                                       interval_in_sec=config['INTERVAL_IN_SEC'])
 
     publisher.register_topic(arrivals_topic)

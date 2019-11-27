@@ -111,22 +111,26 @@ class AirTraffic:
 
         return {state.icao24: state for state in states}
 
-    def arrivals_handler(self, airport: str, context: Optional[Dict[str, StateVector]] = None) -> Message:
+    def arrivals_handler(self, airport: str, context: Optional[Any] = None) -> Message:
         """
         Is the callback that will be used to the arrival related topics
         """
+        states_dict = self.get_states_dict()
+
         data = self._flight_connection_handler(airport,
-                                               states_dict=context,
+                                               states_dict=states_dict,
                                                get_flight_connections_handler=self._arrivals_today_handler)
 
         return Message(body=json.dumps(data), content_type='application/json')
 
-    def departures_handler(self, airport: str, context: Optional[Dict[str, StateVector]] = None) -> Message:
+    def departures_handler(self, airport: str, context: Optional[Any] = None) -> Message:
         """
         Is the callback that will be used to the departure related topics
         """
+        states_dict = self.get_states_dict()
+
         data = self._flight_connection_handler(airport,
-                                               states_dict=context,
+                                               states_dict=states_dict,
                                                get_flight_connections_handler=self._departures_today_handler)
 
         return Message(body=json.dumps(data), content_type='application/json')
