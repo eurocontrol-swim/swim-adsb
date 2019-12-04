@@ -2,7 +2,7 @@
 
 SWIM ADSB is an application that retrieves live air traffic information from 
 [OpenSky Network](https://opensky-network.org/) and demonstrates how it can use the 
-[SWIM-PubSub](https://bitbucket.org/antavelos-eurocontrol/swim-pubsub) mini framework in order to publish this
+[SWIM-PubSub](https://github.com/eurocontrol-swim/swim-pubsub) mini framework in order to publish this
 information through a broker.
 
 
