@@ -4,6 +4,7 @@ pyyaml
 git+https://git@github.com/eurocontrol-swim/rest-client.git
 git+https://git@github.com/eurocontrol-swim/opensky-network-client.git
 git+https://git@github.com/eurocontrol-swim/subscription-manager-client.git
-git+https://git@github.com/eurocontrol-swim/swim-pubsub.git
+git+https://git@github.com/eurocontrol-swim/pubsub-facades.git
+git+https://git@github.com/eurocontrol-swim/swim-qpid-proton.git
 python-qpid_proton
 cachetools

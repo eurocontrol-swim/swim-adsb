@@ -35,11 +35,13 @@ BROKER:
   cert_key: '/secrets/rabbitmq/client_key.pem'
   cert_password: 'swim-ti'
 
-SUBSCRIPTION-MANAGER:
+SUBSCRIPTION-MANAGER-API:
   host: '0.0.0.0:8080'
   https: false
   timeout: 30
   verify: false
+  username: 'swim-adsb'
+  password: 'swim-adsb'
 
 ADSB:
   CITIES:
@@ -51,5 +53,3 @@ ADSB:
   INTERVAL_IN_SEC: 5
   TRAFFIC_TIMESPAN_IN_DAYS: 3
 
-SWIM_ADSB_SM_USER: 'swim-adsb'
-SWIM_ADSB_SM_PASS: 'swim-adsb'
