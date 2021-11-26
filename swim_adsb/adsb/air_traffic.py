@@ -2,27 +2,27 @@
 Copyright 2019 EUROCONTROL
 ==========================================
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following
    disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following 
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
    disclaimer in the documentation and/or other materials provided with the distribution.
-3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products 
+3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products
    derived from this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ==========================================
 
-Editorial note: this license is an instance of the BSD license template as provided by the Open Source Initiative: 
+Editorial note: this license is an instance of the BSD license template as provided by the Open Source Initiative:
 http://opensource.org/licenses/BSD-3-Clause
 
 Details on EUROCONTROL: http://www.eurocontrol.int
@@ -45,20 +45,42 @@ AirTrafficDataType = Dict[str, Union[str, float, int]]
 
 
 class AirTraffic:
-    def __init__(self, traffic_timespan_in_days):
+    def __init__(self, traffic_time_span_in_days):
         """
         Using the OpenSky Network API it tracks the flights from and to specific airports.
+
+        :param traffic_time_span_in_days:
         """
-        self.traffic_timespan_in_days = traffic_timespan_in_days
-        self.client: OpenskyNetworkClient = OpenskyNetworkClient.create('opensky-network.org', timeout=30)
+        self.traffic_time_span_in_days = traffic_time_span_in_days
+        self.client = OpenskyNetworkClient.create('opensky-network.org', timeout=30)
+
+    @property
+    def _days_span_in_timestamps(self) -> Tuple[int, int]:
+        """
+
+        Returns the timestamp of the start (00:00:00 AM) of the day `traffic_time_span_in_days`
+        before the current one and the timestamp of the end (23:59:59 PM) of the current day.
+
+        Timestamps are in seconds since UNIX epoch.
+
+        :return:
+        """
+        last_day = datetime.today()
+        first_day = last_day - timedelta(days=self.traffic_time_span_in_days)
+
+        start_of_first_day = first_day.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_last_day = last_day.replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        return int(start_of_first_day .timestamp()), int(end_of_last_day.timestamp())
 
     def _flight_connections_today(self, icao: str, callback: Callable) -> List[FlightConnection]:
         """
-        Returns the flight connections (arrivals or departures based on the callback) of the current day.
+        Returns the flight connections (arrivals or departures based on the callback) of the current
+        day.
 
         :param icao: airport identifier
         """
-        begin, end = self._days_span(self.traffic_timespan_in_days)
+        begin, end = self._days_span_in_timestamps
 
         try:
             result = callback(icao, begin, end)
@@ -73,7 +95,8 @@ class AirTraffic:
         """
         Returns the flight arrivals of the current day.
 
-        The result is cached for 10 minutes (could be more) as the flight arrivals do not change so often within a day
+        The result is cached for 10 minutes (could be more) as the flight arrivals do not change so
+        often within a day
 
         :param icao: airport identifier
         """
@@ -84,7 +107,8 @@ class AirTraffic:
         """
         Returns the flight departures of the current day.
 
-        The result is cached for 10 minutes (could be more) as the flight departures do not change so often within a day
+        The result is cached for 10 minutes (could be more) as the flight departures do not change
+        so often within a day
 
         :param icao: airport identifier
         """
@@ -117,9 +141,11 @@ class AirTraffic:
         """
         states_dict = self.get_states_dict()
 
-        data = self._flight_connection_handler(airport,
-                                               states_dict=states_dict,
-                                               get_flight_connections_handler=self._arrivals_today_handler)
+        data = self._flight_connection_handler(
+            airport,
+            states_dict=states_dict,
+            get_flight_connections_handler=self._arrivals_today_handler
+        )
 
         return Message(body=json.dumps(data), content_type='application/json')
 
@@ -129,19 +155,23 @@ class AirTraffic:
         """
         states_dict = self.get_states_dict()
 
-        data = self._flight_connection_handler(airport,
-                                               states_dict=states_dict,
-                                               get_flight_connections_handler=self._departures_today_handler)
+        data = self._flight_connection_handler(
+            airport,
+            states_dict=states_dict,
+            get_flight_connections_handler=self._departures_today_handler
+        )
 
         return Message(body=json.dumps(data), content_type='application/json')
 
-    def _flight_connection_handler(self,
-                                   airport: str,
-                                   states_dict: Dict[str, StateVector],
-                                   get_flight_connections_handler: Callable) -> List[AirTrafficDataType]:
+    def _flight_connection_handler(
+            self,
+            airport: str,
+            states_dict: Dict[str, StateVector],
+            get_flight_connections_handler: Callable) -> List[AirTrafficDataType]:
         """
-        Matches the flight connections (arrivals or departures of the airport depending on the provided handler) with
-        the current states (flights on going) and returns a subset of the data of those flights.
+        Matches the flight connections (arrivals or departures of the airport depending on the
+        provided handler) with the current states (flights on going) and returns a subset of the
+        data of those flights.
         :param airport: icao of the airport
         :param states_dict:
         :param get_flight_connections_handler:
@@ -151,8 +181,11 @@ class AirTraffic:
 
         flight_connections_dict = {fc.icao24: fc for fc in flight_connections if fc.icao24}
 
-        flight_connections_with_state = {icao24: fc for icao24, fc in flight_connections_dict.items()
-                                         if icao24 in states_dict}
+        flight_connections_with_state = {
+            icao24: fc
+            for icao24, fc in flight_connections_dict.items()
+            if icao24 in states_dict
+        }
 
         data = [self._get_flight_data(states_dict.get(fc_icao24), fc)
                 for fc_icao24, fc in flight_connections_with_state.items()]
@@ -160,7 +193,8 @@ class AirTraffic:
         return data
 
     @staticmethod
-    def _get_flight_data(state: StateVector, flight_connection: FlightConnection) -> AirTrafficDataType:
+    def _get_flight_data(state: StateVector, flight_connection: FlightConnection) \
+            -> AirTrafficDataType:
         """
         Combines data of an ongoing flight and an arrival or departure and returns a subset of it.
         :param state:
@@ -178,16 +212,3 @@ class AirTraffic:
             'to': to_airport,
             'last_contact': state.last_contact_in_sec
         }
-
-    @staticmethod
-    def _days_span(days: int) -> Tuple[int, int]:
-        """
-        Returns the timestamps of the start (00:00:00 AM) and the end (23:59:59 PM) of the current day in seconds since
-        UNIX epoch.
-        :param days: indicates how many days in the past from today the span will be calculated
-        :return:
-        """
-        end = datetime.today()
-        begin = end - timedelta(days=days)
-
-        return int(begin.timestamp()), int(end.timestamp())

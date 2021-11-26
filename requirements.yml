@@ -10,5 +10,6 @@ dependencies:
       - git+https://git@github.com/eurocontrol-swim/subscription-manager-client.git
       - git+https://git@github.com/eurocontrol-swim/swim-qpid-proton.git
       - git+https://git@github.com/eurocontrol-swim/pubsub-facades.git
+      - git+https://git@github.com/eurocontrol-swim/swim-backend.git
       - python-qpid_proton
       - cachetools

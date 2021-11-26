@@ -3,8 +3,8 @@ dependencies:
   - _libgcc_mutex=0.1=main
   - _openmp_mutex=4.5=1_gnu
   - attrs=21.2.0=pyhd3eb1b0_0
-  - ca-certificates=2021.7.5=h06a4308_1
-  - certifi=2021.5.30=py39h06a4308_0
+  - ca-certificates=2021.10.26=h06a4308_2
+  - certifi=2021.10.8=py39h06a4308_0
   - coverage=5.5=py39h27cfd23_2
   - iniconfig=1.1.1=pyhd3eb1b0_0
   - ld_impl_linux-64=2.35.1=h7274673_9
@@ -12,37 +12,43 @@ dependencies:
   - libgcc-ng=9.3.0=h5101ec6_17
   - libgomp=9.3.0=h5101ec6_17
   - libstdcxx-ng=9.3.0=hd4cf53a_17
-  - more-itertools=8.8.0=pyhd3eb1b0_0
-  - ncurses=6.2=he6710b0_1
-  - openssl=1.1.1k=h27cfd23_0
-  - packaging=21.0=pyhd3eb1b0_0
-  - pip=21.2.4=py37h06a4308_0
+  - more-itertools=8.10.0=pyhd3eb1b0_0
+  - ncurses=6.3=h7f8727e_2
+  - openssl=1.1.1l=h7f8727e_0
+  - packaging=21.3=pyhd3eb1b0_0
+  - pip=21.2.4=py39h06a4308_0
   - pluggy=0.13.1=py39h06a4308_0
   - py=1.10.0=pyhd3eb1b0_0
-  - pyparsing=2.4.7=pyhd3eb1b0_0
+  - pyparsing=3.0.4=pyhd3eb1b0_0
   - pytest=6.2.4=py39h06a4308_2
-  - pytest-cov=2.12.1=pyhd3eb1b0_0
-  - python=3.9.6=h12debd9_1
-  - pyyaml=5.4.1=py39h27cfd23_1
+  - pytest-cov=3.0.0=pyhd3eb1b0_0
+  - python=3.9.7=h12debd9_1
+  - pyyaml=6.0=py39h7f8727e_1
   - readline=8.1=h27cfd23_0
-  - setuptools=52.0.0=py39h06a4308_0
+  - setuptools=58.0.4=py39h06a4308_0
   - sqlite=3.36.0=hc218d9a_0
-  - tk=8.6.10=hbc83047_0
+  - tk=8.6.11=h1ccaba5_0
   - toml=0.10.2=pyhd3eb1b0_0
-  - tzdata=2021a=h5d7bf9c_0
-  - wheel=0.37.0=pyhd3eb1b0_0
+  - tzdata=2021e=hda174b7_0
+  - wheel=0.37.0=pyhd3eb1b0_1
   - xz=5.2.5=h7b6447c_0
   - yaml=0.2.5=h7b6447c_0
   - zlib=1.2.11=h7b6447c_3
   - pip:
-    - cachetools==4.2.2
-    - charset-normalizer==2.0.4
-    - idna==3.2
-    - opensky-network-client==0.0.6
+    - cachetools==4.2.4
+    - charset-normalizer==2.0.8
+    - deprecated==1.2.13
+    - idna==3.3
+    - mongoengine==0.23.1
+    - opensky-network-client==0.0.7
     - pubsub-facades==0.0.3
+    - pymongo==3.12.1
     - python-qpid-proton==0.35.0
+    - redis==4.0.2
     - requests==2.26.0
     - rest-client==0.1.1
-    - subscription-manager-client==0.0.9
-    - swim-qpid-proton==0.0.2
-    - urllib3==1.26.6
+    - subscription-manager-client==0.0.10
+    - swim-backend==0.0.8
+    - swim-qpid-proton==0.1.1
+    - urllib3==1.26.7
+    - wrapt==1.13.3

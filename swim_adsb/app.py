@@ -72,7 +72,7 @@ swim_publisher = SWIMPublisher.create_from_config(_get_config_path())
 
 
 # configure topics
-air_traffic = AirTraffic(traffic_timespan_in_days=config['ADSB']['TRAFFIC_TIMESPAN_IN_DAYS'])
+air_traffic = AirTraffic(traffic_time_span_in_days=config['ADSB']['TRAFFIC_TIMESPAN_IN_DAYS'])
 interval_in_sec = config['ADSB']['INTERVAL_IN_SEC']
 
 for city, code in config['ADSB']['CITIES'].items():
