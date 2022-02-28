@@ -35,6 +35,7 @@ from typing import Union, Dict, Any
 import yaml
 from pkg_resources import resource_filename
 from pubsub_facades.swim_pubsub import SWIMPublisher
+from swim_proton.messaging_handlers import Messenger
 
 from swim_adsb.adsb.air_traffic import AirTraffic
 
@@ -76,13 +77,16 @@ air_traffic = AirTraffic(traffic_time_span_in_days=config['ADSB']['TRAFFIC_TIMES
 interval_in_sec = config['ADSB']['INTERVAL_IN_SEC']
 
 for city, code in config['ADSB']['CITIES'].items():
-    swim_publisher.add_topic(topic_name=f"arrivals.{city.lower()}",
-                             message_producer=partial(air_traffic.arrivals_handler, code),
-                             interval_in_sec=interval_in_sec)
-
-    swim_publisher.add_topic(topic_name=f"departures.{city.lower()}",
-                             message_producer=partial(air_traffic.arrivals_handler, code),
-                             interval_in_sec=interval_in_sec)
+    swim_publisher.add_topic_messenger(Messenger(
+        id=f"arrivals.{city.lower()}",
+        message_producer=partial(air_traffic.arrivals_handler, code),
+        interval_in_sec=interval_in_sec
+    ))
+    swim_publisher.add_topic_messenger(Messenger(
+        id=f"departures.{city.lower()}",
+        message_producer=partial(air_traffic.departures_handler, code),
+        interval_in_sec=interval_in_sec
+    ))
 
 
 if __name__ == '__main__':
